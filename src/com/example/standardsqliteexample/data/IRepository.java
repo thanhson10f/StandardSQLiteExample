@@ -1,5 +1,7 @@
 package com.example.standardsqliteexample.data;
 
+import java.util.List;
+
 public interface IRepository<T>{
 	
 	//Add an entity
@@ -17,6 +19,8 @@ public interface IRepository<T>{
 	//Get an entity by Id
 	public T getById(long id);
 	
+	public List<T> getBySelections(String[] projection,String selection,String[] selectionArgs,String groupBy,String having, String orderBy,String limit);
+	
 	//Get All entities
-	public Iterable<T> getAll();
+	public List<T> getAll();
 }

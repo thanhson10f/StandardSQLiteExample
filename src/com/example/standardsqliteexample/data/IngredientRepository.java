@@ -1,5 +1,7 @@
 package com.example.standardsqliteexample.data;
 
+import java.util.List;
+
 import android.content.Context;
 
 import com.example.standardsqliteexample.models.Ingredient;
@@ -43,9 +45,15 @@ public class IngredientRepository extends RepositoryBase<Ingredient> implements 
 	}
 
 	@Override
-	public Iterable<Ingredient> getAll() {
+	public List<Ingredient> getAll() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public List<Ingredient> getBySelections(String[] projection,String selection,String[] selectionArgs,String groupBy,String having, String orderBy,String limit) {
+		// TODO Auto-generated method stub
+		return super.getBySelections(projection, selection, selectionArgs, groupBy, having, orderBy, limit);
 	}
 
 }
