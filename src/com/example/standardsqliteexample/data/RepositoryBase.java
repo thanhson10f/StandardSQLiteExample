@@ -14,6 +14,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 public class RepositoryBase<T> {
 	private CookingDbHelper dbHelper;
@@ -60,8 +61,12 @@ public class RepositoryBase<T> {
 			Method getMethod = null;
 			
 			try {
+				Log.d(null, "get"
+						+ Utilities.capitalizeFirstLetter(fieldName));
+				
 				getMethod = clazz.getClass().getMethod("get"
 						+ Utilities.capitalizeFirstLetter(fieldName));
+				
 			} catch (NoSuchMethodException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -69,7 +74,8 @@ public class RepositoryBase<T> {
 
 			Object methodReturn = null;
 			try {
-				getMethod.invoke(methodReturn);
+				methodReturn = getMethod.invoke(clazz);
+				Log.d(null, (String)methodReturn);
 			} catch (IllegalAccessException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -79,7 +85,7 @@ public class RepositoryBase<T> {
 			} catch (InvocationTargetException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			} 
 
 			String fieldTypeName = fieldType.getName().toLowerCase(
 					Locale.getDefault());
@@ -175,7 +181,7 @@ public class RepositoryBase<T> {
 					}
 					
 					try {
-						setMethod.invoke(null,cursorMethod.invoke(cursorReturn, c.getColumnIndex(col)));
+						setMethod.invoke(instance,cursorMethod.invoke(c, c.getColumnIndex(col)));
 					} catch (IllegalAccessException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

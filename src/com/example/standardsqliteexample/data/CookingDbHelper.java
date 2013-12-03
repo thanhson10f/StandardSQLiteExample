@@ -16,7 +16,7 @@ public class CookingDbHelper extends SQLiteOpenHelper {
 	    "CREATE TABLE " + IngredientTb.TABLE_NAME + " (" +
 	    IngredientTb._ID + " INTEGER PRIMARY KEY," +
 	    IngredientTb.COLUMN_NAME_INGR_ID + TEXT_TYPE + COMMA_SEP +
-	    IngredientTb.COLUMN_NAME_NAME + TEXT_TYPE + COMMA_SEP +
+	    IngredientTb.COLUMN_NAME_NAME + TEXT_TYPE+
 	    // Any other options for the CREATE command
 	    " )";
 
