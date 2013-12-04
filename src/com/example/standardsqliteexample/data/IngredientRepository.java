@@ -27,7 +27,7 @@ public class IngredientRepository extends RepositoryBase<Ingredient> implements 
 	}
 
 	@Override
-	public void delete(Ingredient entiry) {
+	public void delete(Ingredient entity) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -54,6 +54,13 @@ public class IngredientRepository extends RepositoryBase<Ingredient> implements 
 	public List<Ingredient> getBySelections(String[] projection,String selection,String[] selectionArgs,String groupBy,String having, String orderBy,String limit) {
 		// TODO Auto-generated method stub
 		return super.getBySelections(projection, selection, selectionArgs, groupBy, having, orderBy, limit);
+	}
+
+	@Override
+	public void delete(String selection, String[] selectionArgs) {
+		// TODO Auto-generated method stub
+		super.delete(selection, selectionArgs);
+		
 	}
 
 }

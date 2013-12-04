@@ -11,7 +11,9 @@ public interface IRepository<T>{
 	public void update(T entity);
 	
 	//Delete an entity
-	public void delete(T entiry);
+	public void delete(T entity);
+	
+	public void delete(String selection, String[] selectionArgs);
 	
 	//Get an entity by Id
 	public T getById(String id);

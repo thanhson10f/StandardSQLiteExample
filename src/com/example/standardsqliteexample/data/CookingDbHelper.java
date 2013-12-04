@@ -11,11 +11,12 @@ public class CookingDbHelper extends SQLiteOpenHelper {
 	
 	private static final String TEXT_TYPE = " TEXT";
 	private static final String COMMA_SEP = ",";
+	private static final String UNIQUE = " UNIQUE";
 	
 	private static final String SQL_CREATE_ENTRIES =
 	    "CREATE TABLE " + IngredientTb.TABLE_NAME + " (" +
 	    IngredientTb._ID + " INTEGER PRIMARY KEY," +
-	    IngredientTb.COLUMN_NAME_INGR_ID + TEXT_TYPE + COMMA_SEP +
+	    IngredientTb.COLUMN_NAME_INGR_ID + TEXT_TYPE + UNIQUE + COMMA_SEP +
 	    IngredientTb.COLUMN_NAME_NAME + TEXT_TYPE+
 	    // Any other options for the CREATE command
 	    " )";
@@ -25,7 +26,7 @@ public class CookingDbHelper extends SQLiteOpenHelper {
 	
 	
 	// If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "Cooking.db";
     
     

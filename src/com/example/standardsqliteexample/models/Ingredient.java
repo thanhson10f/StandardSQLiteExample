@@ -1,6 +1,6 @@
 package com.example.standardsqliteexample.models;
 
-public class Ingredient {
+public class Ingredient extends Entity {
 	//private variables
 	private String ingrId;
 	private String name;
