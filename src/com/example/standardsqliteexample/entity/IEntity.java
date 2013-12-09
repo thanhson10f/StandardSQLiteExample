@@ -1,4 +1,4 @@
-package com.example.standardsqliteexample.models;
+package com.example.standardsqliteexample.entity;
 
 public interface IEntity<TPrimaryKey>{  
 	

@@ -20,9 +20,10 @@ import com.example.standardsqliteexample.core.annotation.entity.Map_Entity;
 import com.example.standardsqliteexample.core.annotation.entity.Map_Entity_Column;
 import com.example.standardsqliteexample.core.annotation.entity.Map_Ignore;
 import com.example.standardsqliteexample.data.CookingDbHelper;
+import com.example.standardsqliteexample.entity.Recipe;
 
 public class RepositoryBase<T> {
-	private CookingDbHelper dbHelper;
+	public CookingDbHelper dbHelper;
 	private final Class<T> clazz;
 	private final String TABLE_NAME;
 	private final HashMap<String, String> fieldsMap;
@@ -73,7 +74,7 @@ public class RepositoryBase<T> {
 		
 		return c;
 	}
-	public long Add(T entity) {
+	public long add(T entity) {
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
 
 		ContentValues values = new ContentValues();
@@ -130,8 +131,11 @@ public class RepositoryBase<T> {
 		// Cursor c = db.query(this.TABLE_NAME, null, null, null, null,
 		// null,null, null);
 
-		if (c.getCount() <= 0)
+		if (c.getCount() <= 0){
+			Log.d("count","null");
 			return null;
+			
+		}
 
 		list = getListFromCursor(c);
 
@@ -166,7 +170,7 @@ public class RepositoryBase<T> {
 			Object methodReturn = null;
 			try {
 				methodReturn = getMethod.invoke(clazz);
-				Log.d(null, (String) methodReturn);
+				Log.d(null, String.valueOf(methodReturn));
 			} catch (IllegalAccessException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

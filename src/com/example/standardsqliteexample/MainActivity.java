@@ -3,13 +3,15 @@ package com.example.standardsqliteexample;
 import java.nio.ReadOnlyBufferException;
 import java.util.List;
 
+import com.example.standardsqliteexample.core.Utilities;
 import com.example.standardsqliteexample.data.CookingContract.IngredientRecipeAscTb;
 import com.example.standardsqliteexample.data.CookingContract.IngredientTb;
 import com.example.standardsqliteexample.data.CookingContract.RecipeTb;
 import com.example.standardsqliteexample.data.repository.*;
-import com.example.standardsqliteexample.models.Ingredient;
-import com.example.standardsqliteexample.models.IngredientRecipeAsc;
-import com.example.standardsqliteexample.models.Recipe;
+import com.example.standardsqliteexample.entity.Ingredient;
+import com.example.standardsqliteexample.entity.IngredientRecipeAsc;
+import com.example.standardsqliteexample.entity.Recipe;
+import com.example.standardsqliteexample.models.IngrInRecipe;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -63,10 +65,12 @@ public class MainActivity extends Activity {
 		Ingredient instance = rep.getById(id);
 		Log.d("instance", instance.get_id()+ "-" +instance.getName() + "-");
 		*/
-		String[] selection = {};
-		Cursor c = rep3.rawQuery(selectQuery,selection);
-		
+		String[] selectionAgrs = {};
+		Cursor c = rep3.rawQuery(selectQuery,selectionAgrs);
+		//Cursor c = rep3.rawQuery("select * from ingredient",selectionAgrs);
+		Utilities.MapCursor(c,IngrInRecipe.class);
 		if(c.moveToFirst()){
+			
 			Log.d("result", "has "+c.getFloat(2) +" "+c.getString(0)+" in "+c.getString(1));
 		}
 	}

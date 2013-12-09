@@ -1,10 +1,10 @@
-package com.example.standardsqliteexample.models;
+package com.example.standardsqliteexample.entity;
 
 import com.example.standardsqliteexample.core.annotation.entity.Map_Entity_Column;
 
 public class Entity implements IEntity<Long>{
 	
-	@Map_Entity_Column(name = "_id",isPrimaryKey=true)
+	@Map_Entity_Column(name = "_id",isPrimaryKey=true,isUnique=true)
 	protected Long _id;
 	
 	@Override

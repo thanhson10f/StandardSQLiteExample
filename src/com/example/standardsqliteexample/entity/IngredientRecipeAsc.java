@@ -1,11 +1,11 @@
-package com.example.standardsqliteexample.models;
+package com.example.standardsqliteexample.entity;
 
 import com.example.standardsqliteexample.core.annotation.entity.Map_Entity;
 import com.example.standardsqliteexample.core.annotation.entity.Map_Entity_Column;
 import com.example.standardsqliteexample.data.CookingContract.IngredientRecipeAscTb;
 import com.example.standardsqliteexample.data.CookingContract.RecipeTb;
 
-@Map_Entity(name = IngredientRecipeAscTb.TABLE_NAME,primaryKey=IngredientRecipeAscTb._ID)
+@Map_Entity(name = IngredientRecipeAscTb.TABLE_NAME,primaryKey={IngredientRecipeAscTb._ID})
 public class IngredientRecipeAsc extends Entity {
 
 	

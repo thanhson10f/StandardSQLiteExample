@@ -1,4 +1,4 @@
-package com.example.standardsqliteexample.models;
+package com.example.standardsqliteexample.entity;
 
 import com.example.standardsqliteexample.core.annotation.entity.Map_Entity;
 import com.example.standardsqliteexample.core.annotation.entity.Map_Entity_Column;

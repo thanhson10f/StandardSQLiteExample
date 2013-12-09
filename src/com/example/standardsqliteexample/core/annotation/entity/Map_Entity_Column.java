@@ -15,4 +15,5 @@ public @interface Map_Entity_Column {
 	int length() default -1;
 	String type() default "";
 	String FK() default "";
+	boolean autoIncrement() default false;
 }

@@ -3,9 +3,9 @@ package com.example.standardsqliteexample.data;
 
 import com.example.standardsqliteexample.core.Utilities;
 import com.example.standardsqliteexample.data.CookingContract.IngredientTb;
-import com.example.standardsqliteexample.models.Ingredient;
-import com.example.standardsqliteexample.models.IngredientRecipeAsc;
-import com.example.standardsqliteexample.models.Recipe;
+import com.example.standardsqliteexample.entity.Ingredient;
+import com.example.standardsqliteexample.entity.IngredientRecipeAsc;
+import com.example.standardsqliteexample.entity.Recipe;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -30,7 +30,7 @@ public class CookingDbHelper extends SQLiteOpenHelper {
 	
 	
 	// If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 4;
+    public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "Cooking.db";
     
     
@@ -69,7 +69,9 @@ public class CookingDbHelper extends SQLiteOpenHelper {
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		// TODO Auto-generated method stub
-		db.execSQL(SQL_DELETE_ENTRIES);
+		db.execSQL(Utilities.GenerateDROPTABLESQL(IngredientRecipeAsc.class));
+		db.execSQL(Utilities.GenerateDROPTABLESQL(Recipe.class));
+		db.execSQL(Utilities.GenerateDROPTABLESQL(Ingredient.class));
 		onCreate(db);		
 	}
 

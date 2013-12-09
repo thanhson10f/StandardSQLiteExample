@@ -4,7 +4,7 @@ import java.util.List;
 
 import android.content.Context;
 
-import com.example.standardsqliteexample.models.Ingredient;
+import com.example.standardsqliteexample.entity.Ingredient;
 	
 
 public class IngredientRepository extends RepositoryBase<Ingredient> implements IIngredientRepository {
@@ -12,12 +12,6 @@ public class IngredientRepository extends RepositoryBase<Ingredient> implements 
 	public IngredientRepository(Context context, Class<Ingredient> clazz) {
 		super(context, clazz);
 		// TODO Auto-generated constructor stub
-	}
-
-	@Override
-	public long add(Ingredient entity) {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 
 	@Override

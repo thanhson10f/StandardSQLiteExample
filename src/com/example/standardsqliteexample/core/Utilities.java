@@ -1,21 +1,165 @@
 package com.example.standardsqliteexample.core;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Locale;
 
+import android.database.Cursor;
 import android.util.Log;
 
 import com.example.standardsqliteexample.core.annotation.entity.Map_Entity;
 import com.example.standardsqliteexample.core.annotation.entity.Map_Entity_Column;
 import com.example.standardsqliteexample.core.annotation.entity.Map_Ignore;
 
-public class Utilities {
+public class Utilities<T> {
 	public static String capitalizeFirstLetter(String original){
 	    if(original.length() == 0)
 	        return original;
 	    return original.substring(0, 1).toUpperCase(Locale.getDefault()) + original.substring(1);
 	}
 	
+	public static void MapCursor(Cursor c,Class<?> clazz){
+		String[] projection = c.getColumnNames();
+		Object instance = null;
+		try {
+			instance = clazz.newInstance();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if (c.moveToFirst()) {
+			Log.d("start MapCursor", "in loop");
+			do {
+				try {
+					instance = clazz.newInstance();
+				} catch (InstantiationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				for (String col : projection) {
+					Log.d("col", col);
+					//if (col.equalsIgnoreCase("_id"))
+					//	continue;
+					/*
+					Field field = null;
+					String fieldName = fieldsMap.get(col);
+					Log.d("field",fieldName);
+					try {
+						
+						field = instance.getClass().getDeclaredField(fieldName);
+						Log.d("field",fieldName);
+					} catch (NoSuchFieldException e) {
+						// TODO Auto-generated catch block
+						Class<? super T> superClass = clazz.getSuperclass();
+					      if (superClass == null) {
+					    	  e.printStackTrace();
+					        try {
+								throw e;
+							} catch (NoSuchFieldException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+					      } else {
+					        try {
+								field = superClass.getDeclaredField(col);
+							} catch (NoSuchFieldException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+					      }
+					}
+					// field.setAccessible(true);
+
+					Class<?> fieldType = field.getType();
+					Log.d("fieldtype", fieldType.getName());
+					String fieldTypeName = fieldType.getSimpleName()
+							.toLowerCase(Locale.getDefault());
+					
+					Method setMethod = null;
+					try {
+						setMethod = clazz.getMethod(
+								"set" + Utilities.capitalizeFirstLetter(fieldName),
+								fieldType);
+					} catch (NoSuchMethodException e1) {
+						// TODO Auto-generated catch block
+						Class<? super T> superClass = clazz.getSuperclass();
+					      if (superClass == null) {
+					    	  e1.printStackTrace();
+								try {
+									throw e1;
+								} catch (NoSuchMethodException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+					      } else {
+					    	  try {
+								setMethod = superClass.getMethod(
+											"set" + Utilities.capitalizeFirstLetter(col),
+											fieldType);
+							} catch (NoSuchMethodException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+					      }
+					}
+					Log.d(null, fieldTypeName);
+					Method cursorMethod = null;
+					try {
+						cursorMethod = c
+								.getClass()
+								.getMethod(
+										"get"
+												+ Utilities
+														.capitalizeFirstLetter(fieldTypeName),
+										int.class);
+
+						Log.d("get method cursor",
+								"get"
+										+ Utilities
+												.capitalizeFirstLetter(fieldTypeName));
+					} catch (NoSuchMethodException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					Object cursorReturn;
+					try {
+						cursorReturn = cursorMethod.invoke(c,
+								c.getColumnIndex(col));
+						Log.d("get action", cursorReturn.toString());
+						setMethod.invoke(instance, cursorReturn);
+					} catch (IllegalAccessException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IllegalArgumentException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (InvocationTargetException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+*/
+				}
+				//list.add(instance);
+			} while (c.moveToNext());
+		}
+		
+	}
+	
+	public static String GenerateDROPTABLESQL(Class<?> clazz){
+		if(!clazz.isAnnotationPresent(Map_Entity.class)) return null;
+		Map_Entity entityAnn = clazz.getAnnotation(Map_Entity.class);
+		String tableName = entityAnn.name();
+		return "DROP TABLE IF EXISTS " + tableName;
+	}
 	public static String GenerateCREATESQLQuery(Class<?> clazz){
 		
 		if(!clazz.isAnnotationPresent(Map_Entity.class)) return null;
@@ -53,7 +197,9 @@ if(entityAnn.primaryKey().length>0)isDefinedPK=true;
 				query+=type+" ";
 				if(colAnn.isPrimaryKey() && !isDefinedPK)
 					query+="PRIMARY KEY"+" ";
-				if(!colAnn.allowNull())
+				if(colAnn.autoIncrement() && colAnn.isPrimaryKey()&& !isDefinedPK)
+					query+="AUTOINCREMENT"+" ";
+				if(!colAnn.allowNull() && !colAnn.autoIncrement())
 					query+="NOT NULL"+" ";
 				if(colAnn.isUnique())
 					query+="UNIQUE"+" ";
@@ -64,9 +210,11 @@ if(entityAnn.primaryKey().length>0)isDefinedPK=true;
 			}
 			
 		}
+		
 		if(isDefinedPK) {
 			query+="PRIMARY KEY("+strJoin(entityAnn.primaryKey(),",")+"),";
 		}
+		
 		//bo dau phay cuoi cung
 		query = query.trim().substring(0, query.length()-1);
 		query +=")";

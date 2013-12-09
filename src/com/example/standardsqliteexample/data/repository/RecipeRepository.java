@@ -2,7 +2,7 @@ package com.example.standardsqliteexample.data.repository;
 
 import java.util.List;
 
-import com.example.standardsqliteexample.models.Recipe;
+import com.example.standardsqliteexample.entity.Recipe;
 
 import android.content.Context;
 
@@ -11,12 +11,6 @@ public class RecipeRepository extends RepositoryBase<Recipe> implements IRecipeR
 	public RecipeRepository(Context context, Class<Recipe> clazz) {
 		super(context, clazz);
 		// TODO Auto-generated constructor stub
-	}
-
-	@Override
-	public long add(Recipe entity) {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 
 	@Override
@@ -42,8 +36,6 @@ public class RecipeRepository extends RepositoryBase<Recipe> implements IRecipeR
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	
 
 
 }
