@@ -1,6 +1,8 @@
-package com.example.standardsqliteexample.data;
+package com.example.standardsqliteexample.data.repository;
 
 import java.util.List;
+
+import android.database.Cursor;
 
 public interface IRepository<T>{
 	
@@ -25,4 +27,6 @@ public interface IRepository<T>{
 	
 	//Get All entities
 	public List<T> getAll();
+	
+	public Cursor rawQuery(String query, String[] selectionAgrs);
 }

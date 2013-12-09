@@ -1,59 +1,108 @@
-package com.example.standardsqliteexample.data;
+package com.example.standardsqliteexample.data.repository;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import com.example.standardsqliteexample.core.Utilities;
-import com.example.standardsqliteexample.models.Ingredient;
-
-import android.app.DownloadManager.Query;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+
+import com.example.standardsqliteexample.core.Utilities;
+import com.example.standardsqliteexample.core.annotation.entity.Map_Entity;
+import com.example.standardsqliteexample.core.annotation.entity.Map_Entity_Column;
+import com.example.standardsqliteexample.core.annotation.entity.Map_Ignore;
+import com.example.standardsqliteexample.data.CookingDbHelper;
 
 public class RepositoryBase<T> {
 	private CookingDbHelper dbHelper;
 	private final Class<T> clazz;
 	private final String TABLE_NAME;
+	private final HashMap<String, String> fieldsMap;
 
 	protected RepositoryBase(Context context, Class<T> clazz) {
 		dbHelper = CookingDbHelper.getInstance(context);
 		this.clazz = clazz;
-		this.TABLE_NAME = clazz.getSimpleName()
-				.toLowerCase(Locale.getDefault());
+		this.TABLE_NAME = clazz.getAnnotation(Map_Entity.class).name();
+		fieldsMap = MapField(clazz);
+		
 		Log.d(null, this.TABLE_NAME);
 	}
-
-	protected long Add(T entity) {
+	private HashMap<String, String> MapField(Class<T> clazz){
+		HashMap<String, String> fieldsMap = new HashMap<String, String>();
+		Field[] fields = null;
+		fields = clazz.getDeclaredFields();
+		for(Field field : fields){
+			String name = field.getName();
+			Log.d("field", name);
+			if(field.isAnnotationPresent(Map_Ignore.class)) continue;
+			
+			Log.d("field", name);
+			String colTb = field.getAnnotation(Map_Entity_Column.class).name();
+			
+			fieldsMap.put(colTb, name);
+		}
+		
+		Field[] superFields = clazz.getSuperclass().getDeclaredFields();
+		
+		for(Field field : superFields){
+			String name = field.getName();
+			Log.d("field", name);
+			if(field.isAnnotationPresent(Map_Ignore.class)) continue;
+			
+			Log.d("field", name);
+			String colTb = field.getAnnotation(Map_Entity_Column.class).name();
+			
+			fieldsMap.put(colTb, name);
+		}
+		
+		return fieldsMap;
+	}
+	public Cursor rawQuery(String query, String[] selectionAgrs){
+		SQLiteDatabase db = dbHelper.getWritableDatabase();
+		
+		Log.d("raw Query", query);
+		Cursor c = db.rawQuery(query,selectionAgrs);
+		
+		return c;
+	}
+	public long Add(T entity) {
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
 
 		ContentValues values = new ContentValues();
 		values.putAll(getContentValues(entity));
-
-		long newRowId = db.insert(this.TABLE_NAME, null, values);
+		long newRowId  = -1;
+		try{
+			newRowId = db.insertOrThrow(this.TABLE_NAME, null, values);
+		}catch (SQLiteConstraintException e){
+			Log.d("Inserting error", e.getMessage());
+			return -1;
+		}
 		db.close();
 		return newRowId;
 
 	}
 
-	protected void delete(String selection, String[] selectionArgs) {
+	public void delete(String selection, String[] selectionArgs) {
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
 		db.delete(TABLE_NAME, selection, selectionArgs);
 	}
 
-	protected T getById(long id) {
+	public T getById(long id) {
 		SQLiteDatabase db = dbHelper.getReadableDatabase();
 
 		Cursor c = db.query(this.TABLE_NAME, null, "_id = ?",
 				new String[] { String.valueOf(id) }, null, null, null, null);
 
 		if (c != null && c.getCount() > 0) {
+			Log.d("", "vao cursor");
 			c.moveToFirst();
 			T instance = null;
 
@@ -68,7 +117,7 @@ public class RepositoryBase<T> {
 			return null;
 	}
 
-	protected List<T> getBySelections(String[] projection, String selection,
+	public List<T> getBySelections(String[] projection, String selection,
 			String[] selectionArgs, String groupBy, String having,
 			String orderBy, String limit) {
 
@@ -93,7 +142,12 @@ public class RepositoryBase<T> {
 		ContentValues values = new ContentValues();
 
 		for (Field field : clazz.getClass().getDeclaredFields()) {
+			
+			//Check ignore mapping
+			if(field.isAnnotationPresent(Map_Ignore.class)) continue;
+			
 			String fieldName = field.getName();
+			String colName = field.getAnnotation(Map_Entity_Column.class).name();
 			Class<?> fieldType = field.getType();
 
 			Method getMethod = null;
@@ -128,43 +182,43 @@ public class RepositoryBase<T> {
 					Locale.getDefault());
 
 			if (fieldTypeName.equalsIgnoreCase("boolean")) {
-				values.put(fieldName, (Boolean) methodReturn);
+				values.put(colName, (Boolean) methodReturn);
 			}
 
 			if (fieldTypeName.equalsIgnoreCase("byte")) {
-				values.put(fieldName, (Byte) methodReturn);
+				values.put(colName, (Byte) methodReturn);
 			}
 
 			if (fieldTypeName.equalsIgnoreCase("integer")) {
-				values.put(fieldName, (Integer) methodReturn);
+				values.put(colName, (Integer) methodReturn);
 			}
 
 			if (fieldTypeName.equalsIgnoreCase("long")) {
-				values.put(fieldName, (Long) methodReturn);
+				values.put(colName, (Long) methodReturn);
 			}
 
 			if (fieldTypeName.equalsIgnoreCase("short")) {
-				values.put(fieldName, (Short) methodReturn);
+				values.put(colName, (Short) methodReturn);
 			}
 
 			if (fieldTypeName.equalsIgnoreCase("string")) {
-				values.put(fieldName, (String) methodReturn);
+				values.put(colName, (String) methodReturn);
 			}
 
 			if (fieldTypeName.equalsIgnoreCase("boolean")) {
-				values.put(fieldName, (Boolean) methodReturn);
+				values.put(colName, (Boolean) methodReturn);
 			}
 
 			if (fieldTypeName.equalsIgnoreCase("double")) {
-				values.put(fieldName, (Double) methodReturn);
+				values.put(colName, (Double) methodReturn);
 			}
 
 			if (fieldTypeName.equalsIgnoreCase("float")) {
-				values.put(fieldName, (Float) methodReturn);
+				values.put(colName, (Float) methodReturn);
 			}
 
 			Log.d("add action", fieldTypeName + "---" + methodReturn + "----"
-					+ values.getAsString(fieldName) + "---" + fieldName);
+					+ values.getAsString(colName) + "---" + colName);
 		}
 		return values;
 	}
@@ -193,9 +247,12 @@ public class RepositoryBase<T> {
 					//	continue;
 					
 					Field field = null;
+					String fieldName = fieldsMap.get(col);
+					Log.d("field",fieldName);
 					try {
-						field = instance.getClass().getDeclaredField(col);
-						Log.d("field",field.getName());
+						
+						field = instance.getClass().getDeclaredField(fieldName);
+						Log.d("field",fieldName);
 					} catch (NoSuchFieldException e) {
 						// TODO Auto-generated catch block
 						Class<? super T> superClass = clazz.getSuperclass();
@@ -219,14 +276,14 @@ public class RepositoryBase<T> {
 					// field.setAccessible(true);
 
 					Class<?> fieldType = field.getType();
-					Log.d("fieltype", fieldType.getName());
+					Log.d("fieldtype", fieldType.getName());
 					String fieldTypeName = fieldType.getSimpleName()
 							.toLowerCase(Locale.getDefault());
 					
 					Method setMethod = null;
 					try {
 						setMethod = clazz.getMethod(
-								"set" + Utilities.capitalizeFirstLetter(col),
+								"set" + Utilities.capitalizeFirstLetter(fieldName),
 								fieldType);
 					} catch (NoSuchMethodException e1) {
 						// TODO Auto-generated catch block

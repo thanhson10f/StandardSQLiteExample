@@ -1,7 +1,11 @@
 package com.example.standardsqliteexample.data;
 
 
+import com.example.standardsqliteexample.core.Utilities;
 import com.example.standardsqliteexample.data.CookingContract.IngredientTb;
+import com.example.standardsqliteexample.models.Ingredient;
+import com.example.standardsqliteexample.models.IngredientRecipeAsc;
+import com.example.standardsqliteexample.models.Recipe;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -13,20 +17,20 @@ public class CookingDbHelper extends SQLiteOpenHelper {
 	private static final String COMMA_SEP = ",";
 	private static final String UNIQUE = " UNIQUE";
 	
-	private static final String SQL_CREATE_ENTRIES =
+	/*private static final String SQL_CREATE_ENTRIES =
 	    "CREATE TABLE " + IngredientTb.TABLE_NAME + " (" +
 	    IngredientTb._ID + " INTEGER PRIMARY KEY," +
 	    IngredientTb.COLUMN_NAME_INGR_ID + TEXT_TYPE + UNIQUE + COMMA_SEP +
 	    IngredientTb.COLUMN_NAME_NAME + TEXT_TYPE+
 	    // Any other options for the CREATE command
-	    " )";
-
+	    " )";*/
+	private static final String SQL_CREATE_ENTRIES = Utilities.GenerateCREATESQLQuery(Ingredient.class);
 	private static final String SQL_DELETE_ENTRIES =
 	    "DROP TABLE IF EXISTS " + IngredientTb.TABLE_NAME;
 	
 	
 	// If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 4;
     public static final String DATABASE_NAME = "Cooking.db";
     
     
@@ -57,7 +61,9 @@ public class CookingDbHelper extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		// TODO Auto-generated method stub
-		db.execSQL(SQL_CREATE_ENTRIES);
+		db.execSQL(Utilities.GenerateCREATESQLQuery(Ingredient.class));
+		db.execSQL(Utilities.GenerateCREATESQLQuery(Recipe.class));
+		db.execSQL(Utilities.GenerateCREATESQLQuery(IngredientRecipeAsc.class));
 	}
 
 	@Override
